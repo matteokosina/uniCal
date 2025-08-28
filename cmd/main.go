@@ -1,13 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
-	"sort"
-	"time"
 
 	"gopkg.in/yaml.v3"
 
@@ -69,44 +66,6 @@ func filterEvents(cal *ics.Calendar, blacklist []string) *ics.Calendar {
 	return filteredCal
 }
 
-func printFirstWeekEvents(cal *ics.Calendar) {
-	now := time.Now()
-	weekLater := now.AddDate(0, 0, 7)
-	events := []struct {
-		Title string
-		Start time.Time
-	}{}
-
-	log.Println("Collecting events within the next week...")
-	for _, event := range cal.Events() {
-		start, err := event.GetStartAt()
-		if err != nil {
-			log.Println("Error parsing event start time:", err)
-			continue
-		}
-		if start.After(now) && start.Before(weekLater) {
-			events = append(events, struct {
-				Title string
-				Start time.Time
-			}{
-				Title: event.GetProperty(ics.ComponentPropertySummary).Value,
-				Start: start,
-			})
-			log.Printf("Event collected: %s at %s\n", event.GetProperty(ics.ComponentPropertySummary).Value, start)
-		}
-	}
-
-	log.Printf("Total events collected: %d\n", len(events))
-	sort.Slice(events, func(i, j int) bool {
-		return events[i].Start.Before(events[j].Start)
-	})
-
-	for _, e := range events {
-		fmt.Println("Event:", e.Title)
-		fmt.Println("Start:", e.Start)
-	}
-}
-
 func saveFilteredICal(cal *ics.Calendar, path string) error {
 	file, err := os.Create(path)
 	if err != nil {
@@ -135,7 +94,7 @@ func main() {
 
 	filteredCal := filterEvents(cal, config.Blacklist)
 
-	outputDir := "ical"
+	outputDir := "output"
 	outputFile := outputDir + "/filtered_calendar.ics"
 	if err := os.MkdirAll(outputDir, os.ModePerm); err != nil {
 		log.Fatal("Failed to create output directory:", err)
@@ -146,5 +105,4 @@ func main() {
 	}
 
 	log.Println("Filtered iCal saved to:", outputFile)
-	// printFirstWeekEvents(filteredCal)
 }
