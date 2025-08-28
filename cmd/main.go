@@ -94,10 +94,10 @@ func main() {
 
 	filteredCal := filterEvents(cal, config.Blacklist)
 
-	outputDir := "output"
+	outputDir := "ical"
 	outputFile := outputDir + "/filtered_calendar.ics"
 	if err := os.MkdirAll(outputDir, os.ModePerm); err != nil {
-		log.Fatal("Failed to create output directory:", err)
+		log.Fatal("Failed to create ical directory:", err)
 	}
 
 	if err := saveFilteredICal(filteredCal, outputFile); err != nil {
