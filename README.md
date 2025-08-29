@@ -27,7 +27,7 @@ Use this URL and adjust it to your forked repo:
 
 ## Keeping your Calendar Up-To-Date
 
-The Github Action defined under `.github/workflows` refreshes and syncs with the upstream calendar. It can be run on schedule via a `cron-job`. Adjust this to your desired refresh-rate.
+The Github Action defined under `.github/workflows` refreshes and syncs with the upstream calendar. It can be run on schedule via a `Cron-Job`. Adjust this to your desired refresh-rate.
 
 ## License
 
