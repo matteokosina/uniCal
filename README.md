@@ -25,6 +25,10 @@ Use this URL and adjust it to your forked repo:
 
 `https://raw.githubusercontent.com/<gh-username>/uniCal/main/ical/filtered_calendar.ics`
 
+## Keeping your Calendar Up-To-Date
+
+The Github Action defined under `.github/workflows` refreshes and syncs with the upstream calendar. It can be run on schedule via a `cron-job`. Adjust this to your desired refresh-rate.
+
 ## License
 
 Licensed under the MIT License. See the LICENSE file for details.
