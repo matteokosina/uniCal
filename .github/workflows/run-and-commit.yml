@@ -1,9 +1,12 @@
-name: Run and Commit Filtered iCal
+name: Refresh Calendar
 
 on:
   schedule:
     - cron: "0 0 * * 0" # Runs every Sunday at midnight
   workflow_dispatch: # Allows manual triggering
+  push:
+    branches:
+      - main # Trigger on commits to the main branch
 
 jobs:
   run-and-commit:
