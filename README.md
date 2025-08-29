@@ -16,8 +16,8 @@ Update `config/blacklist.yaml` with your iCal URL and the event titles to exclud
 ```yaml
 origin_url: "https://example.com/calendar.ics"
 blacklist:
+  - "Event Title 0"
   - "Event Title 1"
-  - "Event Title 2"
 ```
 
 The filtered calendar will be saved as `filtered_calendar.ics` in the `ical` directory. Use the Github raw URL of that file and add it to your calendar.
