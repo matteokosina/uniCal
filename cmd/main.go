@@ -13,7 +13,7 @@ import (
 
 type Config struct {
 	OriginURL string   `yaml:"origin_url"`
-	blocklist []string `yaml:"blocklist"`
+	Blocklist []string `yaml:"blocklist"`
 }
 
 func loadConfig(path string) (*Config, error) {
@@ -92,7 +92,7 @@ func main() {
 		log.Fatal("Failed to fetch iCal:", err)
 	}
 
-	filteredCal := filterEvents(cal, config.blocklist)
+	filteredCal := filterEvents(cal, config.Blocklist)
 
 	outputDir := "ical"
 	outputFile := outputDir + "/filtered_calendar.ics"
