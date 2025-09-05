@@ -13,7 +13,7 @@ import (
 
 type Config struct {
 	OriginURL string   `yaml:"origin_url"`
-	Blocklist []string `yaml:"blocklist"`
+	blocklist []string `yaml:"blocklist"`
 }
 
 func loadConfig(path string) (*Config, error) {
@@ -50,15 +50,20 @@ func fetchICal(url string) (*ics.Calendar, error) {
 }
 
 func filterEvents(cal *ics.Calendar, blocklist []string) *ics.Calendar {
+func filterEvents(cal *ics.Calendar, blocklist []string) *ics.Calendar {
 	filteredCal := ics.NewCalendar()
 	for _, event := range cal.Events() {
 		blocklisted := false
 		for _, title := range blocklist {
+		blocklisted := false
+		for _, title := range blocklist {
 			if prop := event.GetProperty(ics.ComponentPropertySummary); prop != nil && prop.Value == title {
+				blocklisted = true
 				blocklisted = true
 				break
 			}
 		}
+		if !blocklisted {
 		if !blocklisted {
 			filteredCal.AddVEvent(event)
 		}
@@ -83,6 +88,7 @@ func saveFilteredICal(cal *ics.Calendar, path string) error {
 
 func main() {
 	config, err := loadConfig("config/blocklist.yaml")
+	config, err := loadConfig("config/blocklist.yaml")
 	if err != nil {
 		log.Fatal("Failed to load config:", err)
 	}
@@ -92,7 +98,7 @@ func main() {
 		log.Fatal("Failed to fetch iCal:", err)
 	}
 
-	filteredCal := filterEvents(cal, config.Blocklist)
+	filteredCal := filterEvents(cal, config.blocklist)
 
 	outputDir := "ical"
 	outputFile := outputDir + "/filtered_calendar.ics"
