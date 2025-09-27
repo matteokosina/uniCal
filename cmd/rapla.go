@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"time"
 
 	ics "github.com/arran4/golang-ical"
 )
@@ -62,4 +63,28 @@ func (rapla *Rapla) filterEvents(blocklist []string) {
 		}
 	}
 	rapla.cal = filteredCal
+}
+
+// Get all unique event names in given timespan
+func (rapla *Rapla) getEventsInTimespan(start time.Time, end time.Time) []string {
+	uniqueNames := make(map[string]bool)
+	for _, event := range rapla.cal.Events() {
+		if prop := event.GetProperty(ics.ComponentPropertyDtStart); prop != nil {
+			// Try to parse the date string from the property value
+			if dtStart, err := time.Parse("20060102T150405Z", prop.Value); err == nil {
+				if dtStart.After(start) && dtStart.Before(end) {
+					if summaryProp := event.GetProperty(ics.ComponentPropertySummary); summaryProp != nil {
+						uniqueNames[summaryProp.Value] = true
+					}
+				}
+			}
+		}
+	}
+
+	// Convert map keys to slice
+	names := make([]string, 0, len(uniqueNames))
+	for name := range uniqueNames {
+		names = append(names, name)
+	}
+	return names
 }
