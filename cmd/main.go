@@ -1,98 +1,77 @@
 package main
 
 import (
-	"io"
+	"fmt"
 	"log"
-	"net/http"
 	"os"
+	"time"
 
-	"gopkg.in/yaml.v3"
-
-	ics "github.com/arran4/golang-ical"
+	"github.com/fsnotify/fsnotify"
+	"github.com/spf13/viper"
 )
 
-type Config struct {
-	OriginURL string   `yaml:"origin_url"`
-	Blocklist []string `yaml:"blocklist"`
-}
+// Initialize Viper and load configuration
+func initConfig() error {
+	// Set default values for configuration reading
+	viper.SetConfigName("blocklist")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("config")
 
-func loadConfig(path string) (*Config, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	data, err := io.ReadAll(file)
-	if err != nil {
-		return nil, err
+	// Read the config file
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal("Failed to read config:", err)
 	}
 
-	var config Config
-	if err := yaml.Unmarshal(data, &config); err != nil {
-		return nil, err
-	}
-	return &config, nil
-}
-
-func fetchICal(url string) (*ics.Calendar, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	cal, err := ics.ParseCalendar(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	return cal, nil
-}
-
-func filterEvents(cal *ics.Calendar, blocklist []string) *ics.Calendar {
-	filteredCal := ics.NewCalendar()
-	for _, event := range cal.Events() {
-		blocklisted := false
-		for _, title := range blocklist {
-			if prop := event.GetProperty(ics.ComponentPropertySummary); prop != nil && prop.Value == title {
-				blocklisted = true
-				break
-			}
-		}
-		if !blocklisted {
-			filteredCal.AddVEvent(event)
-		}
-	}
-	return filteredCal
-}
-
-func saveFilteredICal(cal *ics.Calendar, path string) error {
-	file, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.WriteString(cal.Serialize())
-	if err != nil {
-		return err
-	}
+	// Enable reading of config file on change (dev purpose)
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		fmt.Println("Config file changed:", e.Name)
+	})
+	viper.WatchConfig()
 
 	return nil
 }
 
 func main() {
-	config, err := loadConfig("config/blocklist.yaml")
+	err := initConfig()
 	if err != nil {
-		log.Fatal("Failed to load config:", err)
+		log.Fatal("Failed to load config via viper:", err)
 	}
 
-	cal, err := fetchICal(config.OriginURL)
+	rapla, err := NewRaplaUrl(viper.GetViper().GetString("origin_url"))
 	if err != nil {
 		log.Fatal("Failed to fetch iCal:", err)
 	}
 
-	filteredCal := filterEvents(cal, config.Blocklist)
+	// Check if command line arguments are provided for timeframe
+	if len(os.Args) >= 3 {
+		// Parse start and end dates from command line arguments
+		startStr := os.Args[1]
+		endStr := os.Args[2]
+
+		startTime, err := time.Parse("2006-01-02", startStr)
+		if err != nil {
+			log.Fatal("Failed to parse start date (use YYYY-MM-DD format):", err)
+		}
+
+		endTime, err := time.Parse("2006-01-02", endStr)
+		if err != nil {
+			log.Fatal("Failed to parse end date (use YYYY-MM-DD format):", err)
+		}
+
+		// Get unique event names in specified timeframe
+		eventNames := rapla.getEventsInTimespan(startTime, endTime)
+		log.Printf("Found %d unique events in timeframe %s to %s", len(eventNames), startStr, endStr)
+
+		fmt.Println("Unique event names in timeframe:")
+		for _, name := range eventNames {
+			fmt.Printf("- %s\n", name)
+		}
+		return // Exit early when showing timeframe events
+	} else {
+		// No timeframe specified, apply filtering
+		rapla.filterEvents(viper.GetViper().GetStringSlice("blocklist"))
+		log.Println("Applied blocklist filtering")
+	}
 
 	outputDir := "ical"
 	outputFile := outputDir + "/filtered_calendar.ics"
@@ -100,7 +79,7 @@ func main() {
 		log.Fatal("Failed to create ical directory:", err)
 	}
 
-	if err := saveFilteredICal(filteredCal, outputFile); err != nil {
+	if err := rapla.saveFilteredICal(outputFile); err != nil {
 		log.Fatal("Failed to save filtered iCal:", err)
 	}
 
