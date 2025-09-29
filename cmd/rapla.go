@@ -11,8 +11,8 @@ type Rapla struct {
 	cal *ics.Calendar
 }
 
-// Creating a new Rapla instance based on a pr
-func NewRaplaUrl(url string) (*Rapla, error) {
+// Creating a new Rapla instance based on a provided URL
+func FetchNewRaplaInstance(url string) (*Rapla, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err

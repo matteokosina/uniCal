@@ -10,7 +10,7 @@ import (
 )
 
 // Initialize Viper and load configuration
-func initConfig(url string) error {
+func initConfig() error {
 	// Set default values for configuration reading
 	viper.SetConfigName("blocklist")
 	viper.SetConfigType("yaml")
@@ -31,17 +31,25 @@ func initConfig(url string) error {
 }
 
 func main() {
-	err := initConfig("config/blocklist.yaml")
+	err := initConfig()
 	if err != nil {
 		log.Fatal("Failed to load config via viper:", err)
 	}
 
-	rapla, err := NewRaplaUrl(viper.GetViper().GetString("origin_url"))
+	rapla_url := viper.GetViper().GetString("origin_url")
+	if rapla_url == "" {
+		log.Fatal("Origin URL is not set in the config file")
+	}
+	rapla, err := FetchNewRaplaInstance(rapla_url)
 	if err != nil {
 		log.Fatal("Failed to fetch iCal:", err)
 	}
 
-	rapla.filterEvents(viper.GetViper().GetStringSlice("blocklist"))
+	blocklist := viper.GetViper().GetStringSlice("blocklist")
+	if len(blocklist) == 0 {
+		log.Println("Warning: Blocklist is empty, no events will be filtered")
+	}
+	rapla.filterEvents(blocklist)
 
 	outputDir := "ical"
 	outputFile := outputDir + "/filtered_calendar.ics"
