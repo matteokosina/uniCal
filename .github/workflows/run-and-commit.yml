@@ -33,6 +33,6 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin calendar-updates || git checkout -b calendar-updates
           git checkout calendar-updates
-          git add ical/filtered_calendar.ics
+          git add -f ical/filtered_calendar.ics
           git commit -m "Update filtered_calendar.ics [skip ci]" || echo "No changes to commit"
           git push origin calendar-updates
