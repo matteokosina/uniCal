@@ -62,6 +62,7 @@ func filterEvents(cal *ics.Calendar, blocklist []string) *ics.Calendar {
 		if !blocklisted {
 			filteredCal.AddVEvent(event)
 		}
+		log.Printf("filtered:\n%s\n", event.GetProperty(ics.ComponentPropertySummary).Value)
 	}
 	return filteredCal
 }
