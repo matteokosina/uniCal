@@ -1,0 +1,38 @@
+name: Refresh Calendar
+
+on:
+  schedule:
+    - cron: "0 5 * * *" # Runs every day at 6 AM CET (7 AM CEST)
+  workflow_dispatch: # Allows manual triggering
+  push:
+    branches:
+      - main # Trigger on commits to the main branch
+
+jobs:
+  run-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "^1.20" # Ensure a compatible Go version is used
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Run the program
+        run: go run ./cmd/main.go
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin calendar-updates || git checkout -b calendar-updates
+          git checkout calendar-updates
+          git add -f ical/filtered_calendar.ics
+          git commit -m "Update filtered_calendar.ics [skip ci]" || echo "No changes to commit"
+          git push origin calendar-updates
