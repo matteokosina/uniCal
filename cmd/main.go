@@ -1,15 +1,12 @@
-<<<<<<< HEAD
 package main
 
 import (
-	"io"
+	"fmt"
 	"log"
-	"net/http"
 	"os"
 
-	"gopkg.in/yaml.v3"
-
-	ics "github.com/arran4/golang-ical"
+	"github.com/fsnotify/fsnotify"
+	"github.com/spf13/viper"
 )
 
 type Config struct {
@@ -68,21 +65,23 @@ func filterEvents(cal *ics.Calendar, blocklist []string) *ics.Calendar {
 		if !blocklisted {
 			filteredCal.AddVEvent(event)
 		}
-	}
-	return filteredCal
-}
+// Initialize Viper and load configuration
+func initConfig() error {
+	// Set default values for configuration reading
+	viper.SetConfigName("blocklist")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("config")
 
-func saveFilteredICal(cal *ics.Calendar, path string) error {
-	file, err := os.Create(path)
-	if err != nil {
-		return err
+	// Read the config file
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal("Failed to read config:", err)
 	}
-	defer file.Close()
 
-	_, err = file.WriteString(cal.Serialize())
-	if err != nil {
-		return err
-	}
+	// Enable reading of config file on change (dev purpose)
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		fmt.Println("Config file changed:", e.Name)
+	})
+	viper.WatchConfig()
 
 	return nil
 }
@@ -90,16 +89,26 @@ func saveFilteredICal(cal *ics.Calendar, path string) error {
 func main() {
 	config, err := loadConfig("config/blocklist.yaml")
 	config, err := loadConfig("config/blocklist.yaml")
+	err := initConfig()
 	if err != nil {
-		log.Fatal("Failed to load config:", err)
+		log.Fatal("Failed to load config via viper:", err)
 	}
 
-	cal, err := fetchICal(config.OriginURL)
+	rapla_url := viper.GetViper().GetString("origin_url")
+	if rapla_url == "" {
+		log.Fatal("Origin URL is not set in the config file")
+	}
+	rapla, err := FetchNewRaplaInstance(rapla_url)
 	if err != nil {
 		log.Fatal("Failed to fetch iCal:", err)
 	}
 
 	filteredCal := filterEvents(cal, config.blocklist)
+	blocklist := viper.GetViper().GetStringSlice("blocklist")
+	if len(blocklist) == 0 {
+		log.Println("Warning: Blocklist is empty, no events will be filtered")
+	}
+	rapla.filterEvents(blocklist)
 
 	outputDir := "ical"
 	outputFile := outputDir + "/filtered_calendar.ics"
@@ -107,11 +116,10 @@ func main() {
 		log.Fatal("Failed to create ical directory:", err)
 	}
 
-	if err := saveFilteredICal(filteredCal, outputFile); err != nil {
+	if err := rapla.saveFilteredICal(outputFile); err != nil {
 		log.Fatal("Failed to save filtered iCal:", err)
 	}
 
 	log.Println("Filtered iCal saved to:", outputFile)
 }
-=======
->>>>>>> f785fb6 (feat: introduce tui)
+

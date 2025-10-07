@@ -3,3 +3,4 @@ ical/
 *.log
 .DS_Store
 .env
+ical/
