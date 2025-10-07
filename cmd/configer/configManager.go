@@ -1,4 +1,4 @@
-package main
+package configer
 
 import (
 	"fmt"
@@ -554,7 +554,7 @@ func (m model) View() string {
 	return strings.Join(sections, "\n")
 }
 
-func main() {
+func InitializeAndRun() {
 	p := tea.NewProgram(initialModel(), tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {

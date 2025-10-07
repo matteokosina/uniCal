@@ -1,5 +1,4 @@
 BINARY_NAME=unical
-CONFIG_UI_NAME=unical-config
 
 .PHONY: all build clean run config help
 
@@ -7,8 +6,7 @@ all: build
 
 build:
 	@echo "Building uniCal..."
-	go build -o bin/$(BINARY_NAME) ./cmd/unical
-	go build -o bin/$(CONFIG_UI_NAME) ./cmd/unical-config
+	go build -o bin/$(BINARY_NAME) ./cmd/
 
 clean:
 	@echo "Cleaning..."
@@ -17,11 +15,11 @@ clean:
 
 run:
 	@echo "Running uniCal..."
-	go run ./cmd/unical/main.go
+	go run ./cmd/main.go
 
 config:
 	@echo "Starting configuration UI..."
-	go run ./cmd/unical-config/main.go
+	go run ./cmd/main.go config
 
 install-deps:
 	@echo "Installing dependencies..."
