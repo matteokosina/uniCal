@@ -1,0 +1,36 @@
+BINARY_NAME=unical
+CONFIG_UI_NAME=unical-config
+
+.PHONY: all build clean run config help
+
+all: build
+
+build:
+	@echo "Building uniCal..."
+	go build -o bin/$(BINARY_NAME) ./cmd/unical
+	go build -o bin/$(CONFIG_UI_NAME) ./cmd/unical-config
+
+clean:
+	@echo "Cleaning..."
+	rm -rf bin/
+	rm -rf ical/
+
+run:
+	@echo "Running uniCal..."
+	go run ./cmd/unical/main.go
+
+config:
+	@echo "Starting configuration UI..."
+	go run ./cmd/unical-config/main.go
+
+install-deps:
+	@echo "Installing dependencies..."
+	go mod tidy
+
+help:
+	@echo "Available commands:"
+	@echo "  make build     - Build both binaries"
+	@echo "  make run       - Run the calendar filter"  
+	@echo "  make config    - Run the configuration UI"
+	@echo "  make clean     - Clean build artifacts"
+	@echo "  make install-deps - Install Go dependencies"

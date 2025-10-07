@@ -8,8 +8,48 @@ Ever wanted to subscribe to an iCal calendar but only need specific events, such
 - Downloads iCal data from a specified URL.
 - Filters events by titles listed in a `blocklist.yaml` file.
 - Saves the filtered calendar to an `ical` directory.
+- **Terminal UI** for easy configuration and event management.
+- Add custom notes to events.
+- Interactive blocklist management with search functionality.
 
-## Configuration
+## Installation
+
+```bash
+git clone https://github.com/matteokosina/uniCal.git
+cd uniCal
+make install-deps
+```
+
+## Usage
+
+### Configuration UI (Recommended)
+
+Launch the interactive terminal UI to configure your calendar:
+
+```bash
+make config
+# or directly: go run ./cmd/unical-config/main.go
+```
+
+The TUI provides:
+
+1. **Set iCal URL** - Configure the source calendar URL
+2. **Manage Events & Blocklist** - View events, toggle blocklist status, and add notes
+   - Press `ENTER` to toggle an event in/out of the blocklist
+   - Press `N` to add or edit notes for an event
+   - Events marked with ✗ are blocked, ✓ are allowed
+3. **Save Configuration** - Save your settings to `config/blocklist.yaml`
+
+### Command Line Usage
+
+Run the calendar filter directly:
+
+```bash
+make run
+# or directly: go run ./cmd/unical/main.go
+```
+
+### Manual Configuration
 
 Update `config/blocklist.yaml` with your iCal URL and the event titles to exclude. Example:
 
@@ -18,7 +58,11 @@ origin_url: "https://example.com/calendar.ics"
 blocklist:
   - "Event Title 0"
   - "Event Title 1"
+notes:
+  "Important Meeting": "Don't forget to bring laptop"
 ```
+
+## Output
 
 The filtered calendar will be saved as `filtered_calendar.ics` in the `ical` directory. Use the Github raw URL of that file and add it to your calendar.
 Use this URL and adjust it to your forked repo:

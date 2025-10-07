@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package main
 
 import (
@@ -13,8 +12,9 @@ import (
 )
 
 type Config struct {
-	OriginURL string   `yaml:"origin_url"`
-	blocklist []string `yaml:"blocklist"`
+	OriginURL string            `yaml:"origin_url"`
+	Blocklist []string          `yaml:"blocklist"`
+	Notes     map[string]string `yaml:"notes,omitempty"`
 }
 
 func loadConfig(path string) (*Config, error) {
@@ -33,6 +33,10 @@ func loadConfig(path string) (*Config, error) {
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return nil, err
 	}
+	// Initialize notes map if it doesn't exist
+	if config.Notes == nil {
+		config.Notes = make(map[string]string)
+	}
 	return &config, nil
 }
 
@@ -50,25 +54,53 @@ func fetchICal(url string) (*ics.Calendar, error) {
 	return cal, nil
 }
 
-func filterEvents(cal *ics.Calendar, blocklist []string) *ics.Calendar {
-func filterEvents(cal *ics.Calendar, blocklist []string) *ics.Calendar {
+func filterEvents(cal *ics.Calendar, blocklist []string, notes map[string]string) *ics.Calendar {
 	filteredCal := ics.NewCalendar()
+	notesAdded := 0
+
 	for _, event := range cal.Events() {
 		blocklisted := false
-		for _, title := range blocklist {
-		blocklisted := false
-		for _, title := range blocklist {
-			if prop := event.GetProperty(ics.ComponentPropertySummary); prop != nil && prop.Value == title {
-				blocklisted = true
-				blocklisted = true
-				break
+		eventTitle := ""
+		if prop := event.GetProperty(ics.ComponentPropertySummary); prop != nil {
+			eventTitle = prop.Value
+			for _, title := range blocklist {
+				if prop.Value == title {
+					blocklisted = true
+					break
+				}
 			}
 		}
 		if !blocklisted {
-		if !blocklisted {
+			// Add notes to the event description if available
+			if eventTitle != "" && notes[eventTitle] != "" {
+				// Get existing description
+				existingDesc := ""
+				if descProp := event.GetProperty(ics.ComponentPropertyDescription); descProp != nil {
+					existingDesc = descProp.Value
+				}
+
+				// Append notes to description (use proper ICS line breaks)
+				newDesc := existingDesc
+				if existingDesc != "" {
+					newDesc += "\\n\\n--- Notes ---\\n"
+				} else {
+					newDesc = "--- Notes ---\\n"
+				}
+				newDesc += notes[eventTitle]
+
+				// Remove existing description property and add new one
+				event.RemoveProperty(ics.ComponentPropertyDescription)
+				event.SetProperty(ics.ComponentPropertyDescription, newDesc)
+				notesAdded++
+			}
 			filteredCal.AddVEvent(event)
 		}
 	}
+
+	if notesAdded > 0 {
+		log.Printf("Added notes to %d events", notesAdded)
+	}
+
 	return filteredCal
 }
 
@@ -89,7 +121,6 @@ func saveFilteredICal(cal *ics.Calendar, path string) error {
 
 func main() {
 	config, err := loadConfig("config/blocklist.yaml")
-	config, err := loadConfig("config/blocklist.yaml")
 	if err != nil {
 		log.Fatal("Failed to load config:", err)
 	}
@@ -99,7 +130,7 @@ func main() {
 		log.Fatal("Failed to fetch iCal:", err)
 	}
 
-	filteredCal := filterEvents(cal, config.blocklist)
+	filteredCal := filterEvents(cal, config.Blocklist, config.Notes)
 
 	outputDir := "ical"
 	outputFile := outputDir + "/filtered_calendar.ics"
@@ -113,5 +144,3 @@ func main() {
 
 	log.Println("Filtered iCal saved to:", outputFile)
 }
-=======
->>>>>>> f785fb6 (feat: introduce tui)
