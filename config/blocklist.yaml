@@ -15,4 +15,6 @@ blocklist:
     - Kommunikations und Netztechnik II
     - Mobile Applikationen
     - Mathematische Grundlagen der Kryptographie
-    - \.Grundlagen der KI (KI & BV)
+    # - .Grundlagen der KI (KI & BV)
+    - e Business
+    - Mathematische Grundlagen der Kryptographie
