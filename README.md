@@ -23,7 +23,7 @@ blocklist:
 The filtered calendar will be saved as `filtered_calendar.ics` in the `ical` directory. Use the Github raw URL of that file and add it to your calendar.
 Use this URL and adjust it to your forked repo:
 
-`https://raw.githubusercontent.com/<gh-username>/uniCal/calendar-updates/ical/filtered_calendar.ics`
+`https://raw.githubusercontent.com/<gh-username>/uniCal/calendar-updates/filtered_calendar.ics`
 
 ## Keeping your Calendar Up-To-Date
 
