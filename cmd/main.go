@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
+	app "uniCal/cmd/app"
+	configer "uniCal/cmd/configer"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
@@ -23,14 +24,14 @@ func initConfig() error {
 
 	// Enable reading of config file on change (dev purpose)
 	viper.OnConfigChange(func(e fsnotify.Event) {
-		fmt.Println("Config file changed:", e.Name)
+		log.Println("Config file changed:", e.Name)
 	})
 	viper.WatchConfig()
 
 	return nil
 }
 
-func main() {
+func updateRoutine() {
 	err := initConfig()
 	if err != nil {
 		log.Fatal("Failed to load config via viper:", err)
@@ -40,16 +41,25 @@ func main() {
 	if rapla_url == "" {
 		log.Fatal("Origin URL is not set in the config file")
 	}
-	rapla, err := FetchNewRaplaInstance(rapla_url)
+	rapla, err := app.FetchNewRaplaInstance(rapla_url)
 	if err != nil {
 		log.Fatal("Failed to fetch iCal:", err)
 	}
 
+	// Read blocklist from config
 	blocklist := viper.GetViper().GetStringSlice("blocklist")
 	if len(blocklist) == 0 {
 		log.Println("Warning: Blocklist is empty, no events will be filtered")
 	}
-	rapla.filterEvents(blocklist)
+
+	// Read notes from config
+	notes := viper.GetViper().GetStringMapString("notes")
+	if len(notes) == 0 {
+		log.Println("Warning: Notes is empty, no notes will be added")
+	}
+	// Note: Notes are read in lower case
+
+	rapla.FilterEvents(blocklist, notes)
 
 	outputDir := "ical"
 	outputFile := outputDir + "/filtered_calendar.ics"
@@ -57,9 +67,17 @@ func main() {
 		log.Fatal("Failed to create ical directory:", err)
 	}
 
-	if err := rapla.saveFilteredICal(outputFile); err != nil {
+	if err := rapla.SaveFilteredICal(outputFile); err != nil {
 		log.Fatal("Failed to save filtered iCal:", err)
 	}
 
 	log.Println("Filtered iCal saved to:", outputFile)
+}
+
+func main() {
+	if len(os.Args) > 1 && os.Args[1] == "config" {
+		configer.InitializeAndRun()
+	} else {
+		updateRoutine()
+	}
 }
