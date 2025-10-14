@@ -1,5 +1,39 @@
-origin_url: https://rapla.dhbw-karlsruhe.de/rapla?page=ical&user=freudenmann&file=TINF23B1
+origin_url: "https://rapla.dhbw-karlsruhe.de/rapla?page=ical&user=freudenmann&file=TINF23B1"
 blocklist:
-    - .Grundlagen der KI (KI & BV)
-notes:
-    Advanced SWE: eine notiz
+  # Start of Semester 5
+  - STUV-ADA 3 (freiwilliger Zusatz)
+  - angewandtes Projektmanagement
+  - Interaktive Systeme (KI & IS)
+  - Bildverarbeitung (KI & BV)
+  - e Business
+  - .Grundlagen der KI (KI & BV)
+  - Supervised Machine Learning
+  - Entwurf mobiler Applikationen
+  - Mobile Applikationen
+  - Nachklausuren  (120 min)
+  - Consulting und techn. Vertrieb
+  - Studienarbeit
+  - Ethik für Informatiker (WM-A)
+  - Digitale Forensik  (WMA)
+  - Web-Services (WM-A)
+  - Mathematische Grundlagen der Kryptographie
+  - Gamification
+  - Grundlagen der KI (KI & IS)
+  - Bildverarbetiung  (BV & CG)
+  - Computergraphik  (BV & CG)
+  - Netzwerktreffen für Studentinnen
+  - Allerheiligen
+  - Exkursionstermin TINF23 5. Semester
+  - Anfahrt/Rückfahrt Tieringen
+  - Klausur Web-Services (60 min)
+  - Klausur Zuverlässige Embedded Systeme (60 min)
+  - Klausur Forensik (60 min)
+  - Klausur Mathematische Grundlagen der Kryptographie (60 min)
+  - Supervised Machine Learning Exam  (60 min)
+  - Klausur eBusiness  (90 min)
+  - Klausur Wahlmodul Computergrafik und Bildverarbeitung  (120 min)
+  - Klausur Wahlmodul Künstliche Intelligenz und Bildverarbeitung  (120 min)
+  - Exkursion Fa. VECTOR in Karlsruhe
+  - Hl. 3 Könige
+  - Klausurwoche 5. Semester
+  - Kolloquium 2025  ( min)
