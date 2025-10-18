@@ -1,5 +1,7 @@
 # uniCal 📆📦
 
+<img width="744" height="789" alt="Screenshot 2025-10-18 at 11 37 08" src="https://github.com/user-attachments/assets/4ac4d6b7-1db2-489d-a1d5-30cb785166a3" />
+
 Ever wanted to subscribe to an iCal calendar but only need specific events, such as a university schedule where you don't attend every course?  
 **uniCal** is a Go application that downloads an iCal file from a given URL, filters out unwanted events using a blocklist, and creates a new, customized iCal file.
 
