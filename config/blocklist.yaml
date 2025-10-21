@@ -1,5 +1,6 @@
 origin_url: "https://rapla.dhbw-karlsruhe.de/rapla?page=ical&user=freudenmann&file=TINF23B1"
 blocklist:
+  # Start of Semester 5
   - STUV-ADA 3 (freiwilliger Zusatz)
   - angewandtes Projektmanagement
   - Interaktive Systeme (KI & IS)
@@ -36,7 +37,3 @@ blocklist:
   - Hl. 3 Könige
   - Klausurwoche 5. Semester
   - Kolloquium 2025  ( min)
-  - mündl. Prüfung  ( min)
-  - Vorbereitungsraum mündl. Prüfung
-  - Klausur Wahlmodul Bildverarbeitung (KI und BV)  (60 min)
-  - Klausur Wahlmodul Künstliche Intelligenz und Bildverarbeitung  (60 min)
