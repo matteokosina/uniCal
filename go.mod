@@ -1,13 +1,13 @@
 module uniCal
 
-go 1.23.0
+go 1.24.0
 
 toolchain go1.24.5
 
 require (
 	github.com/arran4/golang-ical v0.3.2
 	github.com/charmbracelet/bubbles v0.21.0
-	github.com/charmbracelet/bubbletea v1.3.7
+	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/lipgloss v1.1.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -27,7 +27,7 @@ require (
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
 )
 
