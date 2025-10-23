@@ -533,7 +533,7 @@ func (m model) View() string {
 		eventsContent.WriteString("Controls:\n")
 		eventsContent.WriteString("  • ENTER: Toggle blocklist (✓=allowed, ✗=blocked)\n")
 		eventsContent.WriteString("  • N: Add/edit notes\n")
-		eventsContent.WriteString("  • ↑/↓: Navigate • ESC: Return\n\n")
+		eventsContent.WriteString("  • ↑/↓: Navigate • ESC: Save\n\n")
 		eventsContent.WriteString(m.eventsList.View())
 
 		sections = append(sections, eventsStyle.Render(eventsContent.String()))
