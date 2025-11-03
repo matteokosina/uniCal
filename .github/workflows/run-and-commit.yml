@@ -2,7 +2,7 @@ name: Refresh Calendar
 
 on:
   schedule:
-    - cron: "* * * * *" # Runs every day at 6 AM CET (7 AM CEST)
+    - cron: "0 6 * * *" # Runs every day at 6 AM CET (7 AM CEST)
   workflow_dispatch: # Allows manual triggering
   push:
     branches:
