@@ -1006,6 +1006,9 @@ ATTENDEE;CN=Strand\,
 ATTENDEE;CN=Röthig\,
   Jürgen;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT:MAILTO:juergen.roethig@dhb
  w-karlsruhe.de
+ATTENDEE;CN=Nagel\,
+  Claudia;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT:MAILTO:nagel.claudia@dhbw-
+ karlsruhe.de
 ATTENDEE;CN=Ritterbusch\,
   Sebastian;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT:MAILTO:sebastian.ritterb
  usch@dhbw-karlsruhe.de
